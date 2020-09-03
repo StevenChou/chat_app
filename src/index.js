@@ -5,7 +5,6 @@ const socketio = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-// 包裝了 http server
 const io = socketio(server);
 
 const port = process.env.PORT || 3000;
@@ -13,20 +12,17 @@ const publicDirectoryPath = path.join(__dirname, '../public');
 
 app.use(express.static(publicDirectoryPath));
 
-let count = 0;
-
 io.on('connection', (socket) => {
   console.log('New WebSocket connection');
 
-  socket.emit('countUpdated', count);
+  socket.emit('message', 'Welcome!');
 
-  socket.on('increment', () => {
-    count++;
+  socket.on('sendMessage', (message) => {
     // to single connection
-    // socket.emit('countUpdated', count);
+    // socket.emit('message', message);
 
     // to all connections
-    io.emit('countUpdated', count);
+    io.emit('message', message);
   });
 });
 

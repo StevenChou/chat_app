@@ -16,6 +16,8 @@ io.on('connection', (socket) => {
   console.log('New WebSocket connection');
 
   socket.emit('message', 'Welcome!');
+  // 除了自己以外的其他 connections
+  socket.broadcast.emit('message', 'A new user has joined!');
 
   socket.on('sendMessage', (message) => {
     // to single connection
@@ -23,6 +25,17 @@ io.on('connection', (socket) => {
 
     // to all connections
     io.emit('message', message);
+  });
+
+  socket.on('sendLocation', (coords) => {
+    io.emit(
+      'message',
+      `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
+    );
+  });
+
+  socket.on('disconnect', () => {
+    io.emit('message', 'A user has left!');
   });
 });
 
